@@ -1,23 +1,20 @@
+import { NewTodoForm } from "./NewTodoForm"
 import "./styles.css"
 import { useState } from "react"
 
 export default function App() {
-  const [newItem, setNewItem] = useState("")
   const [todos, setTodos] = useState([])
 
-  function handleSubmit(e) {
-    // Keeps page from refreshing
-    e.preventDefault()
+  function addTodo(title) {
     // Must pass a func to set state (setTodos) in order to modify existing data. Func takes one argument (current value of your state (currentTodos)) and returns whatever value you want the new state to be. This ensures that it will keep adding values to the new array as items are added (rather than restarting with an empty array each time the page renders, cancelling out previous items). Anytime we need to use the current value, we need to pass a function, otherwise we can just pass a value (as in our input's onChange below).
     setTodos(currentTodos => {
       return [
         ...currentTodos, 
-        { id: crypto.randomUUID(), title: newItem, completed: false },
+        { id: crypto.randomUUID(), title, completed: false },
       ]
     })
-  // Clears input box after each submit by setting it to an empty string
-    setNewItem("")
   }
+
   // Takes in a todo's id and whether or not it is completed. We want to update our todos to change the id of the todo passed into this func to be completed. Map through all todos and for each one, check to see if it's the one I'm currently trying to toggle
   function toggleTodo(id, completed) {
     setTodos(currentTodos => {
@@ -43,19 +40,8 @@ export default function App() {
 
   return (
   <>
-  <form onSubmit={handleSubmit} className="new-item-form">
-    <div className="form-row">
-      <label htmlFor="item">New Item</label>
-      <input 
-        // Value of our input is equal to whatever our new item is (determined onChange below)
-        value={newItem} 
-        // onChange takes in an event object and calls setNewItem func. setNewItem gets the value of a user's input and sets that as the newItem value. "Whenever text is entered into the input, get this value, set that as my newItem, rerun my component, and now that new value will be set to the input's value (above)."
-        onChange= {e => setNewItem(e.target.value)}
-        type="text" 
-        id="item"></input>
-    </div>
-    <button className="btn">Add</button>
-  </form>
+  {/* PROPS! onSubmit is taco - passes addTodo func from this file into our custom NewTodoForm component so that it can access it. "There's a prop on our NewTodoForm called onSubmit, and we're passing it down this data." */}
+  <NewTodoForm onSubmit={addTodo} />
   <h1 className="header">Todo List</h1>
   <ul className="list">
     {/* When there are no todos, display this message (&& = shortcircuiting) */}
